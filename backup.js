@@ -1,55 +1,81 @@
+console.log("Backuper is working");
+const cron = require("node-cron");
 const { exec } = require("child_process");
-
+const fs = require("fs");
+const archiver = require("archiver");
+const axios = require("axios");
+const FormData = require("form-data");
+const TOKEN = process.env.TELEGRAM_TOKEN;
+const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const MONGO_URI = process.env.MONGO_URL;
+const BACKUP_PATH = "./backup";
 const databaseName = process.env.DATABASE_NAME;
-const backupDirectory = "./";
 
-const backupCommand = `mongodump --db ${databaseName} --out ${backupDirectory}`;
-
-exports.getBackup = () => {
-exec(backupCommand, (error, stdout, stderr) => {
+function backupDatabase() {
+    const command = `mongodump --uri="${MONGO_URI}" --out="${BACKUP_PATH}"`;
+    exec(command, (error, stdout, stderr) => {
     if (error) {
-        console.error(`Backup failed: ${error.message}`);
-    } else {
-        console.log(`Backup successful:\n${stdout}`);
+        console.error(error);
+        return;
     }
-});
-};
+    console.log("Database backup created successfully");
+    zipAndSend();
+    });
+}
 
-// const { exec } = require('child_process');
-// const fs = require('fs');
-// const axios = require('axios');
+async function zipAndSend() {
+    const output = fs.createWriteStream(`./backup/${databaseName}.zip`);
+    const archive = archiver("zip", {
+        zlib: { level: 9 },
+    });
+    output.on("close", function () {
+        console.log(
+        "Archive created successfully. Total bytes: " + archive.pointer()
+        );
+        sendDocumentToTelegramChannel(
+        `./backup/${databaseName}.zip`,
+        CHAT_ID,
+        TOKEN
+        )
+        .then(() => {
+            console.log("Backup sent to Telegram successfully.");
+        })
+        .catch((err) => {
+            console.error("Failed to send backup to Telegram:", err);
+        });
+    });
+    archive.on("error", function (err) {
+        throw err;
+    });
+    archive.pipe(output);
+    archive.directory(`./backup/${databaseName}/`, false);
+    archive.finalize();
+}
 
-// const databaseName = 'instagram';
-// const backupDirectory = './';
-// const backupFileName = `${databaseName}_backup_${new Date().toISOString()}.tar.gz`;
-
-// const backupCommand = `mongodump --db ${databaseName} --out ${backupDirectory}`;
-
-// exec(backupCommand, (error, stdout, stderr) => {
-//     if (error) {
-//         console.error(`Backup failed: ${error.message}`);
-//     } else {
-//         console.log(`Backup successful:\n${stdout}`);
-
-//         const backupFilePath = `${backupDirectory}${databaseName}`;
-//         const backupFile = fs.createReadStream(backupFilePath);
-
-//         const uploadUrl = 'https://api.hypernova.uz/upload';
-
-//         const formData = new FormData();
-//         formData.append('file', backupFile);
-
-//         axios.post(uploadUrl, formData, {
-//             headers: {
-//                 'Content-Type': 'multipart/form-data',
-//             },
-//         })
-//         .then(response => {
-//             console.log('File upload successful');
-//             console.log('Response:', response.data);
-//         })
-//         .catch(error => {
-//             console.error('File upload failed:', error.message);
-//         });
-//     }
-// });
+async function sendDocumentToTelegramChannel(filePath, chatId, botToken) {
+    const url = `https://api.telegram.org/bot${botToken}/sendDocument`;
+    const formData = new FormData();
+    formData.append("document", fs.createReadStream(filePath));
+    formData.append("chat_id", chatId);
+    try {
+        const response = await axios.post(url, formData, {
+        headers: {
+            ...formData.getHeaders(),
+        },
+        });
+        console.log("Document sent successfully:", response.data);
+    } catch (error) {
+        console.error("Failed to send document:", error);
+    }
+}
+cron.schedule(
+    "0 0 * * *",
+    () => {
+        console.log("Starting scheduled database backup");
+        backupDatabase();
+    },
+    {
+        scheduled: true,
+        timezone: "America/New_York",
+    }
+);
