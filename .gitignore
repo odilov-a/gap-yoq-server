@@ -10,6 +10,10 @@ logs/
 *.db
 *.sql
 
+dist/
+build/
+out/
+*.out
 # OS and editor generated files
 .DS_Store
 Thumbs.db
