@@ -39,8 +39,12 @@ exports.getEvolutionById = async (req, res) => {
 
 exports.createEvolution = async (req, res) => {
   try {
-    const newEvolution = await Evolution.create(req.body);
-    return res.json({ data: newEvolution });
+    const newEvolution = await Evolution({
+      year: req.body.year,
+      description: req.body.description,
+    });
+    const savedEvolution = await newEvolution.save();
+    return res.json({ data: savedEvolution });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -48,15 +52,17 @@ exports.createEvolution = async (req, res) => {
 
 exports.updateEvolution = async (req, res) => {
   try {
-    const oldEvolution = await Evolution.findById(req.params.id);
-    if (!oldEvolution) {
-      return res.status(404).json({ message: "Evolution not found" });
-    }
     const updatedEvolution = await Evolution.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      {
+        year: req.body.year,
+        description: req.body.description,
+      },
       { new: true }
     );
+    if (!updatedEvolution) {
+      return res.status(404).json({ message: "Evolution not found" });
+    }
     return res.json({ data: updatedEvolution });
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -65,9 +71,7 @@ exports.updateEvolution = async (req, res) => {
 
 exports.deleteEvolution = async (req, res) => {
   try {
-    const deletedEvolution = await Evolution.findByIdAndDelete(
-      req.params.id
-    );
+    const deletedEvolution = await Evolution.findByIdAndDelete(req.params.id);
     if (!deletedEvolution) {
       return res.status(404).json({ message: "Evolution not found" });
     }

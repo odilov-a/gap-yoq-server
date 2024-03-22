@@ -4,7 +4,7 @@ const userController = require("../controller/user.controller.js");
 const userRoutes = Router();
 
 userRoutes.get("/get-me", authMiddleware, userController.getMe);
-userRoutes.put("/:userId",authMiddleware,userController.update);
+userRoutes.put("/user/:userId", authMiddleware, userController.update);
 userRoutes.post("/login", userController.login);
 userRoutes.post("/register", userController.register);
 

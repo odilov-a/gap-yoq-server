@@ -11,6 +11,7 @@ const uploadMiddleware = multer({ storage: storage }).fields([
   { name: "image03", maxCount: 5 },
 ]);
 const outputPath = `${process.cwd()}/uploads/`;
+const generateUUID = () => uuidv4();
 const resizeAndSaveImage = async (file, filename, width, height) => {
   const imageBuffer = await sharp(file.buffer)
     .resize({ width, height, fit: "inside", withoutEnlargement: true })
@@ -18,6 +19,7 @@ const resizeAndSaveImage = async (file, filename, width, height) => {
   fs.writeFileSync(`${outputPath}${filename}`, imageBuffer);
   return `${process.env.URL}${filename}`;
 };
+
 const uploadFile = (req, res, next) => {
   uploadMiddleware(req, res, async function (err) {
     if (err instanceof multer.MulterError) {
@@ -31,17 +33,18 @@ const uploadFile = (req, res, next) => {
       const images = [];
       if (req.files && req.files[field]) {
         for (let i = 0; i < req.files[field].length; i++) {
-          const filename = `${Date.now()}_${i}.${format.toLowerCase()}`;
+          const uniqueId = generateUUID(); // Generate a UUID
+          const filename = `${uniqueId}_${Date.now()}_${i}.${format.toLowerCase()}`; // Include UUID in the filename
           const largeFilename = `${filename}`;
-          const mediumFilename = `${Date.now()}_${i}_medium.${format.toLowerCase()}`;
-          const smallFilename = `${Date.now()}_${i}_small.${format.toLowerCase()}`;
+          const mediumFilename = `${uniqueId}_${Date.now()}_${i}_medium.${format.toLowerCase()}`;
+          const smallFilename = `${uniqueId}_${Date.now()}_${i}_small.${format.toLowerCase()}`;
           const largeURL = await resizeAndSaveImage(
             req.files[field][i],
             largeFilename,
             600,
             600
           );
-          const mediumURL= await resizeAndSaveImage(
+          const mediumURL = await resizeAndSaveImage(
             req.files[field][i],
             mediumFilename,
             500,
@@ -62,11 +65,9 @@ const uploadFile = (req, res, next) => {
       }
       return images;
     };
-
     files.image = await handleImageField("image");
     files.image02 = await handleImageField("image02");
     files.image03 = await handleImageField("image03");
-
     req.images = files;
     next();
   });

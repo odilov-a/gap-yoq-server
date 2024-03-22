@@ -6,6 +6,8 @@ const feedbackRoutes = Router();
 feedbackRoutes.get("/", feedbackController.getAllFeedbacks);
 feedbackRoutes.get("/:id", feedbackController.getFeedbackById);
 feedbackRoutes.post("/", feedbackController.createFeedback);
+feedbackRoutes.patch("/:id/like", feedbackController.likeFeedback);
+feedbackRoutes.patch("/:id/dislike", feedbackController.dislikeFeedback);
 feedbackRoutes.put("/:id", authMiddleware, feedbackController.updateFeedback);
 feedbackRoutes.delete("/:id", authMiddleware, feedbackController.deleteFeedback);
 

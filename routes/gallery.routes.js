@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const authMiddleware = require("../middlewares/auth.middleware.js");
-const uploadMiddleware = require("../middlewares/upload.middleware.js");
+const uploadMiddleware = require("../middlewares/image.middleware.js");
 const galleryController = require("../controller/gallery.controller.js");
 const galleryRoutes = Router();
 

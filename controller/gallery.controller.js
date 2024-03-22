@@ -67,7 +67,7 @@ exports.updateGallery = async (req, res) => {
 
 exports.deleteGallery = async (req, res) => {
   try {
-    const deletedGallery = await Galleries.findOneAndDelete(
+    const deletedGallery = await Galleries.findByIdAndDelete(
       req.params.id
     );
     if (!deletedGallery) {

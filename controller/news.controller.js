@@ -43,7 +43,16 @@ exports.createNews = async (req, res) => {
     req.body.image = image;
     req.body.image02 = image02;
     req.body.image03 = image03;
-    const newNews = await News.create(req.body);
+    const newNews = new News({
+      title: req.body.title,
+      description: req.body.description,
+      hashtag: req.body.hashtag,
+      image: image,
+      image02: image02,
+      image03: image03,
+    });
+    console.log(newNews);
+    await newNews.save();
     return res.json({ data: newNews });
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -65,7 +74,14 @@ exports.updateNews = async (req, res) => {
     req.body.image03 = image03;
     const updatedNews = await News.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      {
+        title: req.body.title,
+        description: req.body.description,
+        hashtag: req.body.hashtag,
+        image: image,
+        image02: image02,
+        image03: image03,
+      },
       { new: true }
     );
     return res.json({ data: updatedNews });
@@ -76,9 +92,7 @@ exports.updateNews = async (req, res) => {
 
 exports.deleteNews = async (req, res) => {
   try {
-    const deletedNews = await News.findByIdAndDelete(
-      req.params.id
-    );
+    const deletedNews = await News.findByIdAndDelete(req.params.id);
     if (!deletedNews) {
       return res.status(404).json({ message: "News not found" });
     }

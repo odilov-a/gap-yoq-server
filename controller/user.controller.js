@@ -5,20 +5,25 @@ const bcrypt = require("bcrypt");
 exports.getMe = async (req, res) => {
   try {
     const { userId } = req.headers;
-    const findUser = await Users.findById(userId);
-    if (!findUser) {
+    const user = await Users.findById(userId);
+    if (!user) {
       return res.status(404).json({
-        message: "User Not Found!",
+        message: "User not found",
       });
     }
     return res.json({
       data: {
-        token: sign(findUser._id),
-        login: findUser.login,
+        _id: user._id,
+        login: user.login,
+        createdAt: user.createdAt,
+        address: user.address,
+        number: user.number,
+        telegram: user.telegram,
+        instagram: user.instagram,
       },
     });
   } catch (err) {
-    return res.json(err);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -44,23 +49,20 @@ exports.register = async (req, res) => {
       },
     });
   } catch (err) {
-    return res.status(500).json({
-      message: "Internal Server Error",
-      error: err.message,
-    });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 exports.login = async (req, res) => {
   try {
     const { login, password } = req.body;
-    const findUser = await Users.findOne({ login });
-    if (!findUser) {
+    const user = await Users.findOne({ login });
+    if (!user) {
       return res.status(404).json({
-        message: "User Not Found!",
+        message: "User not found",
       });
     }
-    const isPasswordValid = bcrypt.compareSync(password, findUser.password);
+    const isPasswordValid = bcrypt.compareSync(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({
         message: "Invalid login credentials",
@@ -68,37 +70,56 @@ exports.login = async (req, res) => {
     }
     return res.json({
       data: {
-        token: sign(findUser._id.toString()),
-        login: findUser.login,
+        token: sign(user._id.toString()),
+        login: user.login,
       },
     });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 exports.update = async (req, res) => {
   try {
     const { userId } = req.headers;
-    const { newLogin, newPassword } = req.body;
-    const findUser = await Users.findById(userId);
-    if (!findUser) {
+    const {
+      login,
+      password,
+      address,
+      number,
+      telegram,
+      instagram,
+    } = req.body;
+    const user = await Users.findById(userId);
+    if (!user) {
       return res.status(404).json({
-        message: "User Not Found!",
+        message: "User not found",
       });
     }
-    if (newLogin) {
-      findUser.login = newLogin;
+    if (login) {
+      user.login = login;
     }
-    if (newPassword) {
-      const hashedPassword = bcrypt.hashSync(newPassword, 10);
-      findUser.password = hashedPassword;
+    if (password) {
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      user.password = hashedPassword;
     }
-    const updatedUser = await findUser.save();
+    if (address) {
+      user.address = address;
+    }
+    if (number) {
+      user.number = number;
+    }
+    if (telegram) {
+      user.telegram = telegram;
+    }
+    if (instagram) {
+      user.instagram = instagram;
+    }
+    const updatedUser = await user.save();
     return res.json({
       data: { updatedUser },
     });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };

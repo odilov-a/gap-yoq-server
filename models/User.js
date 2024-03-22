@@ -10,6 +10,18 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    address: {
+      type: String,
+    },
+    number: {
+      type: String,
+    },
+    telegram: {
+      type: String,
+    },
+    instagram: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
