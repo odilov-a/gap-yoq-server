@@ -33,8 +33,8 @@ const uploadFile = (req, res, next) => {
       const images = [];
       if (req.files && req.files[field]) {
         for (let i = 0; i < req.files[field].length; i++) {
-          const uniqueId = generateUUID(); // Generate a UUID
-          const filename = `${uniqueId}_${Date.now()}_${i}.${format.toLowerCase()}`; // Include UUID in the filename
+          const uniqueId = generateUUID();
+          const filename = `${uniqueId}_${Date.now()}_${i}.${format.toLowerCase()}`;
           const largeFilename = `${filename}`;
           const mediumFilename = `${uniqueId}_${Date.now()}_${i}_medium.${format.toLowerCase()}`;
           const smallFilename = `${uniqueId}_${Date.now()}_${i}_small.${format.toLowerCase()}`;

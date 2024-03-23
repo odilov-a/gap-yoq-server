@@ -51,7 +51,6 @@ exports.createNews = async (req, res) => {
       image02: image02,
       image03: image03,
     });
-    console.log(newNews);
     await newNews.save();
     return res.json({ data: newNews });
   } catch (err) {

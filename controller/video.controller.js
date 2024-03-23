@@ -12,7 +12,7 @@ exports.getAllVideo = async (req, res) => {
     ]);
     const totalPages = Math.ceil(totalVideo / perPage);
     if (allVideo.length === 0) {
-      return res.status(404).json({ message: [] });
+      return res.status(404).json({ message: "No videos found" });
     }
     return res.json({
       data: allVideo,
@@ -39,9 +39,12 @@ exports.getVideoById = async (req, res) => {
 
 exports.createVideo = async (req, res) => {
   try {
-    req.body.link = req.video;
+    if (!req.video) {
+      return res.status(400).json({ message: "Video missing" });
+    }
+    req.body.video_link = req.video;
     const newVideo = await Video.create(req.body);
-    return res.json({ data: newVideo });
+    return res.status(201).json({ data: newVideo });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -53,7 +56,10 @@ exports.updateVideo = async (req, res) => {
     if (!oldVideo) {
       return res.status(404).json({ message: "Video not found" });
     }
-    req.body.link = req.video;
+    if (!req.video) {
+      return res.status(400).json({ message: "Video missing" });
+    }
+    req.body.video_link = req.video;
     const updatedVideo = await Video.findByIdAndUpdate(
       req.params.id,
       req.body,

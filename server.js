@@ -41,7 +41,6 @@ mongoose
   .catch((err) => console.log("db error", err.message));
 
 app.use(cors());
-
 app.get("/video/:video", video);
 
 app.use("/api", mainRouter);

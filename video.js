@@ -3,7 +3,7 @@ const video = (req, res) => {
   try {
     const range = req.headers.range;
     if (!range) {
-      res.status(400).send("Requires Range header");
+      return res.status(400).send("Requires Range header");
     }
     const videoPath = `videos/${req.params.video}`;
     const videoSize = fs.statSync(`videos/${req.params.video}`).size;

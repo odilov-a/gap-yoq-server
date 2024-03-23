@@ -1,8 +1,13 @@
 const mongoose = require("mongoose");
 const VideoSchema = new mongoose.Schema(
   {
-    link: {
+    video_link: {
       type: String,
+      required : true,
+    },
+    image_link: {
+      type: String,
+      default: "https://index-eosin.vercel.app/image%2056.png",
       required : true,
     },
   },

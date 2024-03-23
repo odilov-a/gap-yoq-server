@@ -1,7 +1,6 @@
 const { Router } = require("express");
 const translationRoutes = require("./translation.routes.js");
 const userRoutes = require("./user.routes.js");
-const productRoutes = require("./product.routes.js");
 const partnerRoutes = require("./partner.routes.js");
 const newsRoutes = require("./news.routes.js");
 const evolutionRoutes = require("./evolution.routes.js");
@@ -12,7 +11,6 @@ const router = Router();
 
 router.use("/translations", translationRoutes);
 router.use(userRoutes);
-router.use("/products", productRoutes);
 router.use("/partners", partnerRoutes);
 router.use("/news", newsRoutes);
 router.use("/evolutions", evolutionRoutes);

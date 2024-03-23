@@ -11,7 +11,8 @@ const storage = multer.diskStorage({
   },
 });
 
-const uploadMiddleware = multer({ storage: storage }).array("videos", 5);
+const uploadMiddleware = multer({ storage: storage }).array("video", 5);
+
 const uploadFile = (req, res, next) => {
   uploadMiddleware(req, res, async function (err) {
     if (err instanceof multer.MulterError) {
