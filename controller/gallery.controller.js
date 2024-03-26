@@ -1,6 +1,6 @@
 const Galleries = require("../models/Gallery");
 
-exports.getAllGalleryImages = async (req, res) => {
+exports.getAllGallery = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const perPage = parseInt(req.query.perPage) || 10;

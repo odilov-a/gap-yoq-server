@@ -7,6 +7,7 @@ const evolutionRoutes = require("./evolution.routes.js");
 const galleryRoutes = require("./gallery.routes.js");
 const videoRoutes = require("./video.routes.js");
 const feedbackRoutes = require("./feedback.routes.js");
+const dealerRoutes = require("./dealer.routes.js");
 const router = Router();
 
 router.use("/translations", translationRoutes);
@@ -17,5 +18,6 @@ router.use("/evolutions", evolutionRoutes);
 router.use("/galleries", galleryRoutes);
 router.use("/videos", videoRoutes);
 router.use("/feedbacks", feedbackRoutes);
+router.use("/dealers", dealerRoutes);
 
 module.exports = router;

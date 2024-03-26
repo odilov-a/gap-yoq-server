@@ -38,11 +38,14 @@ exports.getVideoById = async (req, res) => {
 };
 
 exports.createVideo = async (req, res) => {
+  console.log("RRRRRRRRR", req);
   try {
     if (!req.video) {
       return res.status(400).json({ message: "Video missing" });
     }
-    req.body.video_link = req.video;
+    console.log("RRRRRRRRR", req);
+    req.body.video = req.video;
+    req.body.image = req.images;
     const newVideo = await Video.create(req.body);
     return res.status(201).json({ data: newVideo });
   } catch (err) {
@@ -57,9 +60,10 @@ exports.updateVideo = async (req, res) => {
       return res.status(404).json({ message: "Video not found" });
     }
     if (!req.video) {
-      return res.status(400).json({ message: "Video missing" });
+      return res.status(400).json({ message: "Video or image missing" });
     }
-    req.body.video_link = req.video;
+    req.body.video = req.video;
+    req.body.image = req.images;
     const updatedVideo = await Video.findByIdAndUpdate(
       req.params.id,
       req.body,
