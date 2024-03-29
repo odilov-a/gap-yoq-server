@@ -22,6 +22,12 @@ const UserSchema = new mongoose.Schema(
     instagram: {
       type: String,
     },
+    youtube: {
+      type: String,
+    },
+    whatsup: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

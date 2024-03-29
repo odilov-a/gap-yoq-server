@@ -20,6 +20,8 @@ exports.getMe = async (req, res) => {
         number: user.number,
         telegram: user.telegram,
         instagram: user.instagram,
+        youtube: user.youtube,
+        whatsup: user.whatsup,
       },
     });
   } catch (err) {
@@ -89,6 +91,8 @@ exports.update = async (req, res) => {
       number,
       telegram,
       instagram,
+      youtube,
+      whatsup,
     } = req.body;
     const user = await Users.findById(userId);
     if (!user) {
@@ -114,6 +118,12 @@ exports.update = async (req, res) => {
     }
     if (instagram) {
       user.instagram = instagram;
+    }
+    if (youtube) {
+      user.youtube = youtube;
+    }
+    if (whatsup) {
+      user.whatsup = whatsup;
     }
     const updatedUser = await user.save();
     return res.json({
