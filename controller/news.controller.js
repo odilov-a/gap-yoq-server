@@ -68,22 +68,32 @@ exports.updateNews = async (req, res) => {
       return res.status(404).json({ message: "News not found" });
     }
     const { image, image02, image03 } = req.images;
-    req.body.image = image;
-    req.body.image02 = image02;
-    req.body.image03 = image03;
+    let updateData = {};
+    if (req.body.title) {
+      updateData.title = req.body.title;
+    }
+    if (req.body.description) {
+      updateData.description = req.body.description;
+    }
+    if (req.body.hashtag) {
+      updateData.hashtag = req.body.hashtag;
+    }
+    if (image.length !== 0) {
+      updateData.image = image;
+    }
+    if (image02.length !== 0) {
+      updateData.image02 = image02;
+    }
+    if (image03.length !== 0) {
+      updateData.image03 = image03;
+    }
     const updatedNews = await News.findByIdAndUpdate(
       req.params.id,
-      {
-        title: req.body.title,
-        description: req.body.description,
-        hashtag: req.body.hashtag,
-        image: image,
-        image02: image02,
-        image03: image03,
-      },
+      updateData,
       { new: true }
     );
-    return res.json({ data: updatedNews });
+    const news = await News.findById(req.params.id);
+    return res.json({ data: news });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
