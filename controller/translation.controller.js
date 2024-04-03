@@ -1,4 +1,4 @@
-const Translations = require("../models/translation");
+const Translations = require("../models/Translation");
 
 exports.getAll = async (req, res) => {
   try {
