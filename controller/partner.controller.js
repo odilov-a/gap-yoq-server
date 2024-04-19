@@ -1,6 +1,6 @@
 const Partner = require("../models/Partner");
 
-exports.getAllPartner = async (req, res) => {
+exports.getAllPartners = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const perPage = parseInt(req.query.perPage) || 10;

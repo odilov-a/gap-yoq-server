@@ -1,6 +1,6 @@
 const Feedback = require("../models/Feedback");
 
-exports.getAllFeedback = async (req, res) => {
+exports.getAllFeedbacks = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const perPage = parseInt(req.query.perPage) || 10;
