@@ -1,13 +1,30 @@
 const Feedback = require("../models/Feedback");
 
-exports.getAllFeedbacks = async (req, res) => {
+exports.getAllFeedback = async (req, res) => {
   try {
-    const feedbacks = await Feedback.find();
-    return res.status(200).json({ data: feedbacks });
+    const page = parseInt(req.query.page) || 1;
+    const perPage = parseInt(req.query.perPage) || 10;
+    const [totalFeedback, allFeedback] = await Promise.all([
+      Feedback.countDocuments(),
+      Feedback.find()
+        .skip((page - 1) * perPage)
+        .limit(perPage),
+    ]);
+    const totalPages = Math.ceil(totalFeedback / perPage);
+    const currentPage = page;
+    const totalCount = totalFeedback;
+    const pageCount = Math.ceil(totalCount / perPage);
+    if (allFeedback.length === 0) {
+      return res.status(404).json({ message: [] });
+    }
+    return res.status(200).json({
+      data: allFeedback,
+      _meta: { currentPage, perPage, totalCount, pageCount },
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-};
+}
 
 exports.getFeedbackById = async (req, res) => {
   try {

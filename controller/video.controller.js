@@ -11,14 +11,15 @@ exports.getAllVideo = async (req, res) => {
         .limit(perPage),
     ]);
     const totalPages = Math.ceil(totalVideo / perPage);
+    const currentPage = page;
+    const totalCount = totalVideo;
+    const pageCount = Math.ceil(totalCount / perPage);
     if (allVideo.length === 0) {
-      return res.status(404).json({ message: "No videos found" });
+      return res.status(404).json({ message: [] });
     }
     return res.json({
       data: allVideo,
-      page,
-      totalPages,
-      totalItems: totalVideo,
+      _meta: { currentPage, perPage, totalCount, pageCount },
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });

@@ -1,29 +1,30 @@
 const Partner = require("../models/Partner");
 
-exports.getAllPartners = async (req, res) => {
+exports.getAllPartner = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const perPage = parseInt(req.query.perPage) || 10;
-    const [totalPartners, allPartners] = await Promise.all([
+    const [totalPartner, allPartner] = await Promise.all([
       Partner.countDocuments(),
       Partner.find()
         .skip((page - 1) * perPage)
         .limit(perPage),
     ]);
-    const totalPages = Math.ceil(totalPartners / perPage);
-    if (allPartners.length === 0) {
+    const totalPages = Math.ceil(totalPartner / perPage);
+    const currentPage = page;
+    const totalCount = totalPartner;
+    const pageCount = Math.ceil(totalCount / perPage);
+    if (allPartner.length === 0) {
       return res.status(404).json({ message: [] });
     }
     return res.json({
-      data: allPartners,
-      page,
-      totalPages,
-      totalItems: totalPartners,
+      data: allPartner,
+      _meta: { currentPage, perPage, totalCount, pageCount },
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
-};
+}
 
 exports.getPartnerById = async (req, res) => {
   try {

@@ -4,24 +4,27 @@ exports.getAllGallery = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const perPage = parseInt(req.query.perPage) || 10;
-    const totalGalleries = await Galleries.countDocuments();
-    const totalPages = Math.ceil(totalGalleries / perPage);
-    const galleries = await Galleries.find({})
-      .skip((page - 1) * perPage)
-      .limit(perPage);
-    if (!galleries || galleries.length === 0) {
-      return res.status(404).json({ message: "Gallery not found" });
+    const [totalGallery, allGallery] = await Promise.all([
+      Galleries.countDocuments(),
+      Galleries.find()
+        .skip((page - 1) * perPage)
+        .limit(perPage),
+    ]);
+    const totalPages = Math.ceil(totalGallery / perPage);
+    const currentPage = page;
+    const totalCount = totalGallery;
+    const pageCount = Math.ceil(totalCount / perPage);
+    if (allGallery.length === 0) {
+      return res.status(404).json({ message: [] });
     }
     return res.json({
-      data: galleries,
-      page,
-      totalPages,
-      totalItems: totalGalleries,
+      data: allGallery,
+      _meta: { currentPage, perPage, totalCount, pageCount },
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
-};
+}
 
 exports.getGalleryById = async (req, res) => {
   try {

@@ -11,14 +11,15 @@ exports.getAllNews = async (req, res) => {
         .limit(perPage),
     ]);
     const totalPages = Math.ceil(totalNews / perPage);
+    const currentPage = page;
+    const totalCount = totalNews;
+    const pageCount = Math.ceil(totalCount / perPage);
     if (allNews.length === 0) {
       return res.status(404).json({ message: [] });
     }
     return res.json({
       data: allNews,
-      page,
-      totalPages,
-      totalItems: totalNews,
+      _meta: { currentPage, perPage, totalCount, pageCount },
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });

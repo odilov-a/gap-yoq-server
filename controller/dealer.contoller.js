@@ -11,14 +11,15 @@ exports.getAllDealer = async (req, res) => {
         .limit(perPage),
     ]);
     const totalPages = Math.ceil(totalDealer / perPage);
+    const currentPage = page;
+    const totalCount = totalDealer;
+    const pageCount = Math.ceil(totalCount / perPage);
     if (allDealer.length === 0) {
       return res.status(404).json({ message: [] });
     }
     return res.json({
       data: allDealer,
-      page,
-      totalPages,
-      totalItems: totalDealer,
+      _meta: { currentPage, perPage, totalCount, pageCount },
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });
