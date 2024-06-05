@@ -1,4 +1,4 @@
-const Translations = require("../models/Translation");
+const Translations = require("../models/Translation.js");
 
 exports.getAll = async (req, res) => {
   try {
@@ -38,11 +38,18 @@ exports.search = async (req, res) => {
   try {
     const { message } = req.params;
     const regex = new RegExp(message, "i");
+
     const translations = await Translations.find({
-      message: { $regex: regex },
+      $or: [
+        { uz: { $regex: regex } },
+        { ru: { $regex: regex } },
+        { en: { $regex: regex } },
+        { kr: { $regex: regex } }
+      ]
     });
-    return res.json(
-      translations.map((translation) => ({
+
+    return res.json({
+      data: translations.map((translation) => ({
         id: translation._id,
         message: translation.message,
         uz: translation.uz ? translation.uz : null,
@@ -50,7 +57,7 @@ exports.search = async (req, res) => {
         en: translation.en ? translation.en : null,
         kr: translation.kr ? translation.kr : null,
       }))
-    );
+    });
   } catch (err) {
     return res.json(err);
   }

@@ -1,52 +1,34 @@
 const dotenv = require("dotenv");
 dotenv.config();
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const mainRouter = require("./routes/router.js");
 require("./backup.js");
+require("./connection.js");
+const express = require("express");
+const cors = require("cors");
+const routes = require("./routes/router.js");
 const video = require("./video.js");
-const path = require("path");
-const fs = require("fs");
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
+
 const app = express();
 app.use(express.json());
 
-const logDir = path.join(__dirname, "logs");
-function getCurrentDateTime() {
-  const now = new Date();
-  return `${now.getFullYear()}-${padNumber(now.getMonth() + 1)}-${padNumber(
-    now.getDate()
-  )}`;
-}
-function padNumber(num) {
-  return num.toString().padStart(2, "0");
-}
-const logFilePath = path.join(logDir, `${getCurrentDateTime()}.mongodb.log`);
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
-}
+app.use(cors());
 
-mongoose.set("debug", function (collectionName, methodName, ...methodArgs) {
-  const timestamp = new Date().toISOString();
-  const logMessage = `[${timestamp}] ${collectionName}.${methodName} ${JSON.stringify(
-    methodArgs[0]
-  )} ${JSON.stringify(methodArgs[1])}\n`;
-  fs.appendFileSync(logFilePath, logMessage, "utf8");
+app.use("/api", routes);
+
+app.get("/", (req, res) => {
+  return res.json({ message: "Server is run!" });
 });
 
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => console.log("mongodb connected"))
-  .catch((err) => console.log("db error", err.message));
-
-app.use(cors());
 app.get("/video/:video", video);
 
-app.use("/api", mainRouter);
 app.use("/uploads", express.static("uploads"));
-app.listen(process.env.PORT || 3001, () =>
-  console.log(`server is running ${PORT}`)
-);
 
-module.exports = app;
+function startServerOnPort(port) {
+  const listen = app.listen(port, () => console.log(`server is running ${port}`))
+  listen.on('error', () => {
+    console.log(`Port ${port} is busy. Trying a different port...`)
+    startServerOnPort(port + 1)
+  })
+}
+
+startServerOnPort(PORT);

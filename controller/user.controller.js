@@ -1,135 +1,94 @@
-const Users = require("../models/User");
-const { sign } = require("../utils/jwt");
+const Users = require("../models/User.js");
+const { sign } = require("../utils/jwt.js");
 const bcrypt = require("bcrypt");
 
 exports.getMe = async (req, res) => {
   try {
     const { userId } = req.headers;
-    const user = await Users.findById(userId);
-    if (!user) {
+    const findUser = await Users.findById(userId);
+    if (!findUser) {
       return res.status(404).json({
-        message: "User not found",
+        message: "User Not Found!",
       });
     }
     return res.json({
       data: {
-        _id: user._id,
-        login: user.login,
-        createdAt: user.createdAt,
-        address: user.address,
-        number: user.number,
-        telegram: user.telegram,
-        instagram: user.instagram,
-        youtube: user.youtube,
-        whatsup: user.whatsup,
+        _id: findUser._id,
+        token: sign(findUser._id.toString()),
+        username: findUser.username,
       },
     });
   } catch (err) {
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: err.message });
   }
 };
 
 exports.register = async (req, res) => {
   try {
-    const { login, password } = req.body;
-    const existingUser = await Users.findOne({ login });
-    if (existingUser) {
-      return res.status(400).json({
-        message: "User with this login already exists",
-      });
-    }
-    const hashedPassword = bcrypt.hashSync(password, 10);
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const newUser = new Users({
-      login,
+      username: req.body.username,
       password: hashedPassword,
     });
-    const savedUser = await newUser.save();
+    const user = await newUser.save();
     return res.json({
-      data: {
-        token: sign(savedUser._id.toString()),
-        login: savedUser.login,
-      },
+      message: "User created",
+      data: user,
     });
   } catch (err) {
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: err.message });
   }
 };
 
 exports.login = async (req, res) => {
   try {
-    const { login, password } = req.body;
-    const user = await Users.findOne({ login });
-    if (!user) {
+    const { username, password } = req.body;
+    const findUser = await Users.findOne({ username });
+    if (!findUser) {
       return res.status(404).json({
-        message: "User not found",
+        message: "User Not Found!",
       });
     }
-    const isPasswordValid = bcrypt.compareSync(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, findUser.password);
     if (!isPasswordValid) {
       return res.status(401).json({
-        message: "Invalid login credentials",
+        message: "Invalid Password",
       });
     }
     return res.json({
       data: {
-        token: sign(user._id.toString()),
-        login: user.login,
+        token: sign(findUser._id.toString()),
+        username: findUser.username,
       },
     });
   } catch (err) {
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: err.message });
   }
 };
 
-exports.update = async (req, res) => {
+exports.updateUser = async (req, res) => {
   try {
     const { userId } = req.headers;
-    const {
-      login,
-      password,
-      address,
-      number,
-      telegram,
-      instagram,
-      youtube,
-      whatsup,
-    } = req.body;
-    const user = await Users.findById(userId);
-    if (!user) {
+    const updatedUser = await Users.findByIdAndUpdate(
+      userId,
+      {
+        username: req.body.username,
+        password: req.body.password,
+      },
+      {
+        new: true,
+      }
+    );
+    if (!updatedUser) {
       return res.status(404).json({
-        message: "User not found",
+        message: "User not found!",
       });
     }
-    if (login) {
-      user.login = login;
-    }
-    if (password) {
-      const hashedPassword = bcrypt.hashSync(password, 10);
-      user.password = hashedPassword;
-    }
-    if (address) {
-      user.address = address;
-    }
-    if (number) {
-      user.number = number;
-    }
-    if (telegram) {
-      user.telegram = telegram;
-    }
-    if (instagram) {
-      user.instagram = instagram;
-    }
-    if (youtube) {
-      user.youtube = youtube;
-    }
-    if (whatsup) {
-      user.whatsup = whatsup;
-    }
-    const updatedUser = await user.save();
     return res.json({
-      data: { updatedUser },
+      message: "User updated",
+      data: updatedUser,
     });
   } catch (err) {
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: err.message });
   }
 };

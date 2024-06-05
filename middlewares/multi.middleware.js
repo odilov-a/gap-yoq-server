@@ -33,17 +33,19 @@ const uploadFile = (req, res, next) => {
       console.log(err);
       return res.status(500).json({ message: "Internal server error" });
     }
-    
-    if (req.files['image']) {
+
+    if (req.files["image"]) {
       const { format = "webp" } = req.query;
       const images = [];
-      for (let i = 0; i < req.files['image'].length; i++) {
+      for (let i = 0; i < req.files["image"].length; i++) {
         const image = {};
         switch (format.toLowerCase()) {
           case "jpg":
           case "jpeg":
             const filenameJPEG = `${Date.now()}_${i}.jpeg`;
-            const convertedImageBufferJPEG = await sharp(req.files['image'][i].path)
+            const convertedImageBufferJPEG = await sharp(
+              req.files["image"][i].path
+            )
               .resize(1200, 1000, {
                 fit: sharp.fit.inside,
                 withoutEnlargement: true,
@@ -54,9 +56,11 @@ const uploadFile = (req, res, next) => {
               `${outputPath}${filenameJPEG}`,
               convertedImageBufferJPEG
             );
-            image.large = `${process.env.URL}${filenameJPEG}`;
+            image.large = `${process.env.IMAGES_URL}${filenameJPEG}`;
             const mediumJPEG = `${Date.now()}_${i}_medium.jpeg`;
-            const convertedImageBufferMediumJPEG = await sharp(req.files['image'][i].path)
+            const convertedImageBufferMediumJPEG = await sharp(
+              req.files["image"][i].path
+            )
               .resize(600, 600, {
                 fit: sharp.fit.inside,
                 withoutEnlargement: true,
@@ -67,22 +71,29 @@ const uploadFile = (req, res, next) => {
               `${outputPath}${mediumJPEG}`,
               convertedImageBufferMediumJPEG
             );
-            image.medium = `${process.env.URL}${mediumJPEG}`;
+            image.medium = `${process.env.IMAGES_URL}${mediumJPEG}`;
             const smallJPEG = `${Date.now()}_${i}_small.jpeg`;
-            const convertedImageBufferSmallJPEG = await sharp(req.files['image'][i].path)
+            const convertedImageBufferSmallJPEG = await sharp(
+              req.files["image"][i].path
+            )
               .resize(300, 300, {
                 fit: sharp.fit.inside,
                 withoutEnlargement: true,
               })
               .jpeg()
               .toBuffer();
-            fs.writeFileSync(`${outputPath}${smallJPEG}`, convertedImageBufferSmallJPEG);
-            image.small = `${process.env.URL}${smallJPEG}`;
+            fs.writeFileSync(
+              `${outputPath}${smallJPEG}`,
+              convertedImageBufferSmallJPEG
+            );
+            image.small = `${process.env.IMAGES_URL}${smallJPEG}`;
             images.push(image);
             break;
           case "png":
             const filenamePNG = `${Date.now()}_${i}.png`;
-            const convertedImageBufferPNG = await sharp(req.files['image'][i].path)
+            const convertedImageBufferPNG = await sharp(
+              req.files["image"][i].path
+            )
               .resize(1200, 1000, {
                 fit: sharp.fit.inside,
                 withoutEnlargement: true,
@@ -93,32 +104,44 @@ const uploadFile = (req, res, next) => {
               `${outputPath}${filenamePNG}`,
               convertedImageBufferPNG
             );
-            image.large = `${process.env.URL}${filenamePNG}`;
+            image.large = `${process.env.IMAGES_URL}${filenamePNG}`;
             const mediumPNG = `${Date.now()}_${i}_medium.png`;
-            const convertedImageBufferMediumPNG = await sharp(req.files['image'][i].path)
+            const convertedImageBufferMediumPNG = await sharp(
+              req.files["image"][i].path
+            )
               .resize(600, 600, {
                 fit: sharp.fit.inside,
                 withoutEnlargement: true,
               })
               .png()
               .toBuffer();
-            fs.writeFileSync(`${outputPath}${mediumPNG}`, convertedImageBufferMediumPNG);
-            image.medium = `${process.env.URL}${mediumPNG}`;
+            fs.writeFileSync(
+              `${outputPath}${mediumPNG}`,
+              convertedImageBufferMediumPNG
+            );
+            image.medium = `${process.env.IMAGES_URL}${mediumPNG}`;
             const smallPNG = `${Date.now()}_${i}_small.png`;
-            const convertedImageBufferSmallPNG = await sharp(req.files['image'][i].path)
+            const convertedImageBufferSmallPNG = await sharp(
+              req.files["image"][i].path
+            )
               .resize(300, 300, {
                 fit: sharp.fit.inside,
                 withoutEnlargement: true,
               })
               .png()
               .toBuffer();
-            fs.writeFileSync(`${outputPath}${smallPNG}`, convertedImageBufferSmallPNG);
-            image.small = `${process.env.URL}${smallPNG}`;
+            fs.writeFileSync(
+              `${outputPath}${smallPNG}`,
+              convertedImageBufferSmallPNG
+            );
+            image.small = `${process.env.IMAGES_URL}${smallPNG}`;
             images.push(image);
             break;
           case "webp":
             const filenameWEBP = `${Date.now()}_${i}.webp`;
-            const convertedImageBufferWEBP = await sharp(req.files['image'][i].path)
+            const convertedImageBufferWEBP = await sharp(
+              req.files["image"][i].path
+            )
               .resize(1200, 1000, {
                 fit: sharp.fit.inside,
                 withoutEnlargement: true,
@@ -129,9 +152,11 @@ const uploadFile = (req, res, next) => {
               `${outputPath}${filenameWEBP}`,
               convertedImageBufferWEBP
             );
-            image.large = `${process.env.URL}${filenameWEBP}`;
+            image.large = `${process.env.IMAGES_URL}${filenameWEBP}`;
             const mediumWEBP = `${Date.now()}_${i}_medium.webp`;
-            const convertedImageBufferMediumWEBP = await sharp(req.files['image'][i].path)
+            const convertedImageBufferMediumWEBP = await sharp(
+              req.files["image"][i].path
+            )
               .resize(600, 600, {
                 fit: sharp.fit.inside,
                 withoutEnlargement: true,
@@ -142,17 +167,22 @@ const uploadFile = (req, res, next) => {
               `${outputPath}${mediumWEBP}`,
               convertedImageBufferMediumWEBP
             );
-            image.medium = `${process.env.URL}${mediumWEBP}`;
+            image.medium = `${process.env.IMAGES_URL}${mediumWEBP}`;
             const smallWEBP = `${Date.now()}_${i}_small.webp`;
-            const convertedImageBufferSmallWEBP = await sharp(req.files['image'][i].path)
+            const convertedImageBufferSmallWEBP = await sharp(
+              req.files["image"][i].path
+            )
               .resize(300, 300, {
                 fit: sharp.fit.inside,
                 withoutEnlargement: true,
               })
               .webp()
               .toBuffer();
-            fs.writeFileSync(`${outputPath}${smallWEBP}`, convertedImageBufferSmallWEBP);
-            image.small = `${process.env.URL}${smallWEBP}`;
+            fs.writeFileSync(
+              `${outputPath}${smallWEBP}`,
+              convertedImageBufferSmallWEBP
+            );
+            image.small = `${process.env.IMAGES_URL}${smallWEBP}`;
             images.push(image);
             break;
           default:
@@ -163,9 +193,9 @@ const uploadFile = (req, res, next) => {
     } else {
       req.images = [];
     }
-    
-    if (req.files['video']) {
-      req.video = `${process.env.VIDEO_URL}${req.files['video'][0].filename}`;
+
+    if (req.files["video"]) {
+      req.video = `${process.env.VIDEO_URL}${req.files["video"][0].filename}`;
     } else {
       req.video = null;
     }

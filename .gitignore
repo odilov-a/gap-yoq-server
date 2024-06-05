@@ -1,6 +1,9 @@
 # Dependency directories
 node_modules/
 
+# Backups
+backups/
+
 # Log files
 logs/
 *.log
@@ -10,15 +13,14 @@ logs/
 *.db
 *.sql
 
-dist/
-build/
-out/
-*.out
 # OS and editor generated files
 .DS_Store
 Thumbs.db
 .vscode/
 *.swp
+
+# Build files
+/dist
 
 # Docker
 .dockerignore
