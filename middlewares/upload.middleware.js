@@ -147,7 +147,7 @@ const uploadFile = (req, res, next) => {
             fs.writeFileSync(`${outputPath}${smallWEBP}`, convertedImageBuffer);
             image.small = `${process.env.IMAGES_URL}${smallWEBP}`;
             files.push(image);
-            fs.unlinkSync(`${process.cwd()}/${req.files[i].path}`);
+            // fs.unlinkSync(`${process.cwd()}/${req.files[i].path}`);
             break;
           default:
             return res.status(400).json({ error: "Unsupported format" });
