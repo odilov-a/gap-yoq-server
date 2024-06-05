@@ -63,11 +63,11 @@ const paginate = async (model, query, route, ...populateFields) => {
         totalPages,
       },
       _links: {
-        self: `${URL}${route}/api/page=${page}&perPage=${perPage}`,
-        first: `${URL}/api/page=1&perPage=${perPage}`,
-        prev: page > 1 ? `${URL}${route}/api/page=${+page - 1}&perPage=${perPage}` : null,
-        next: page < totalPages ? `${URL}${route}/api/page=${+page + 1}&perPage=${perPage}` : null,
-        last: `${URL}${route}/api/page=${totalPages}&perPage=${perPage}`,
+        self: `${URL}api/${model.modelName}?page=${page}&page=${perPage}`, // Self link
+        first: `${URL}api/${model.modelName}?page=1&page=${perPage}`, // First page link
+        prev: page > 1 ? `${URL}api/${model.modelName}?page=${+page - 1}&page=${perPage}` : null, // Previous page link
+        next: page < totalPages ? `${URL}api/${model.modelName}?page=${+page + 1}&page=${perPage}` : null, // Next page link
+        last: `${URL}api/${model.modelName}?page=${totalPages}&page=${perPage}`, // Last page link
       },
     };
   } catch (error) {

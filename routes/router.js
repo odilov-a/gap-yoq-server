@@ -1,19 +1,23 @@
 const { Router } = require("express");
 const translationRoutes = require("./translation.routes.js");
 const userRoutes = require("./user.routes.js");
-const vacancyRoutes = require("./vacancy.routes.js");
-const clientRoutes = require("./client.routes.js");
-const positionRoutes = require("./position.routes.js");
-const teamRoutes = require("./team.routes.js");
-const portfolioRoutes = require("./portfolio.routes.js");
+const galleryRoutes = require("./gallery.routes.js");
+const dealerRoutes = require("./dealer.routes.js");
+const evolutionRoutes = require("./evolution.routes.js");
+const hashtagRoutes = require("./hashtag.routes.js");
+const newsRoutes = require("./news.routes.js");
+const partnerRoutes = require("./partner.routes.js");
+const videoRoutes = require("./video.routes.js");
 const router = Router();
 
 router.use("/translations", translationRoutes);
 router.use("/users", userRoutes);
-router.use("/vacancies", vacancyRoutes);
-router.use("/clients", clientRoutes);
-router.use("/position", positionRoutes);
-router.use("/team", teamRoutes);
-router.use("/portfolio", portfolioRoutes);
+router.use("/galleries", galleryRoutes);
+router.use("/dealers", dealerRoutes);
+router.use("/evolutions", evolutionRoutes);
+router.use("/hashtags", hashtagRoutes);
+router.use("/news", newsRoutes);
+router.use("/partners", partnerRoutes);
+router.use("/videos", videoRoutes);
 
 module.exports = router;
